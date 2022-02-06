@@ -1,0 +1,82 @@
+
+* {
+  font-family: Arial, Helvetica, sans-serif;    
+}
+
+div.content {
+  
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: 'column';
+
+  background-color: rgb(245, 245, 245);
+  min-width: 100px;
+  min-height: 200px;
+  
+  border-radius: 25px;
+  z-index: 3;
+  padding: 10px 20px 10px 20px;
+  margin: 30px 30px 30px 30px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);  
+  
+}
+
+h1 {
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+ 
+}
+
+div.footer {
+  font-size: 0.8em;
+  font-style: italic;  
+  height: auto; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: 'column';
+  width: 100%;  
+  padding: 10px 10px 10px 10px;  
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+div.demo_1 {
+  position:relative;
+  padding: 10px 20px;  
+  border: none;
+  background: none;
+  cursor: pointer;
+  
+  font-family: "Source Code Pro";
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 30px;  
+  color: var(--text-color);
+  
+  background-color: var(--btn-color);
+  box-shadow: var(--shadow-color) 2px 2px 22px;
+  border-radius: 4px; 
+  z-index: 0;  
+  overflow: hidden;   
+}
+
+/* bubbles */
+div.demo_1::before {
+  content: '';
+  pointer-events: none;
+  opacity: .6;
+  background:
+    radial-gradient(circle at 20% 35%,  transparent 0,  transparent 2px, var(--text-color) 3px, var(--text-color) 4px, transparent 4px),
+    radial-gradient(circle at 75% 44%, transparent 0,  transparent 2px, var(--text-color) 3px, var(--text-color) 4px, transparent 4px),
+    radial-gradient(circle at 46% 52%, transparent 0, transparent 4px, var(--text-color) 5px, var(--text-color) 6px, transparent 6px);
+
+  width: 100%;
+  height: 300%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  animation: bubbles 5s linear infinite both;
+}
