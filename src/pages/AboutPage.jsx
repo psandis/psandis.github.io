@@ -7,74 +7,115 @@ const AboutPage = () => {
         <div>
           <h1 className="heading">About the Author</h1>
           <p className="subhead">
-            Technical Project Manager who codes | AI & Cloud (Azure/AWS) | delivers software to production on schedule.
+            Engineering Manager / Team Lead | Building focused teams, clear priorities, and reliable delivery | AI & Cloud (Azure, AWS) | 20+ years in telecom, banking, and large-scale platforms
           </p>
         </div>
-        <Link className="about-btn" to="/">
+        <Link className="about-btn" to="/" aria-label="Back to projects">
           Back to Projects
         </Link>
       </header>
 
       <section className="bio">
         <p className="bio__lead">
-          I solve business problems with technology. Over 20 years in IT, I've learned that the best solutions are simple ones
-          that actually work for real people. I speak both business and technical fluently—translating needs for developers and
-          explaining complex tech to executives without jargon.
+          I’m an engineering leader with 20+ years of experience delivering business-critical systems in telecom, banking, and regulated environments.
         </p>
+
+        <p>
+          Over time, my focus has shifted from designing systems to leading teams, creating clarity, removing blockers early, and keeping delivery predictable even when priorities change.
+        </p>
+
+        <p>
+          I’ve led distributed, cross-functional teams across engineering, product, and architecture, with responsibility spanning roadmap execution, stakeholder alignment, vendor coordination, and production reliability.
+        </p>
+
+        <p>In practice, that means:</p>
+
+        <ul>
+          <li>Turning business goals into clear scope, priorities, and delivery plans</li>
+          <li>Making trade-offs explicit so teams and stakeholders understand decisions</li>
+          <li>Keeping delivery realistic when scope, timelines, or expectations shift</li>
+        </ul>
+
+        <p>
+          As a team lead, I focus on clarity and momentum. Teams work best when priorities are visible, ownership is clear, and obstacles are removed early.
+        </p>
+
+        <p>
+          I’m particularly interested in roles where leadership, delivery responsibility, and technical decision-making come together.
+        </p>
+
         <div className="bio__list">
+
           <div className="bio__section">
             <h3>What I Do</h3>
             <ul>
-              <li>Turn messy business challenges into working technology solutions.</li>
-              <li>Build applications and automate repetitive workflows.</li>
-              <li>Assess if technology should solve a problem, what it costs, and if it’s worth it.</li>
+              <li>Turn unclear business needs into scoped work: priorities, decisions, and a delivery plan.</li>
+              <li>Design and steer platform and integration work across cloud and enterprise systems.</li>
+              <li>Evaluate technology pragmatically: risk, cost, timeline, and operational impact.</li>
             </ul>
           </div>
+
           <div className="bio__section">
             <h3>Approach</h3>
             <ul>
-              <li>Bridge business and engineering; clear requirements and plain-language explanations.</li>
-              <li>Mentor teams; help people master new skills and solve tough problems.</li>
-              <li>Lead without ego—hire smart people and let them excel.</li>
+              <li>Translate business goals into concrete scope, priorities, and delivery plans teams can execute.</li>
+              <li>Run workshops that surface real constraints early (data, integrations, security, ownership, timelines).</li>
+              <li>Keep delivery predictable by aligning stakeholders before work begins.</li>
             </ul>
           </div>
+
           <div className="bio__section">
             <h3>Good At</h3>
             <ul>
-              <li>Building custom applications that solve specific business problems.</li>
-              <li>Automating recurring tasks to free up people’s time.</li>
-              <li>Workshops that surface the real problem before jumping to solutions.</li>
-              <li>Managing client relationships with honest expectations.</li>
+              <li>Leading delivery across cross-functional teams and vendors in complex environments.</li>
+              <li>Integration and platform work: APIs, event flows, and data handoffs between systems.</li>
+              <li>Workshops that turn unclear discussions into concrete decisions.</li>
+              <li>Keeping stakeholders aligned when priorities change.</li>
+              <li>Improving operational reliability through clear ownership and follow-ups.</li>
             </ul>
           </div>
+
           <div className="bio__section">
             <h3>Current Focus</h3>
             <ul>
-              <li>Daily use of AI tools to prototype in hours instead of weeks.</li>
-              <li>Adding productivity and quality with Azure/AWS and modern web stacks.</li>
+              <li>Building teams that deliver reliably through clarity, ownership, and focus.</li>
+              <li>Using AI tools to accelerate prototyping, documentation, and repetitive engineering tasks.</li>
+              <li>Applying modern cloud and integration practices with AWS and Azure.</li>
             </ul>
           </div>
+
           <div className="bio__section">
             <h3>Drives Me</h3>
             <ul>
-              <li>Learning, solving meaningful puzzles, and helping teams work better.</li>
-              <li>Keeping technology simple so it makes life easier, not more complicated.</li>
+              <li>Solving meaningful technical and organizational problems.</li>
+              <li>Helping teams work more effectively without unnecessary complexity.</li>
             </ul>
           </div>
+
           <div className="bio__section">
             <h3>Top Skills</h3>
             <ul>
-              <li>Solution Architecture • IT Service Management • Coaching</li>
-              <li>Agile Methodologies • Product Development</li>
+              <li>Engineering Leadership • Solution & Integration Architecture • Delivery Governance • Coaching</li>
+              <li>Cloud (AWS / Azure) • Agile Delivery • Stakeholder & Vendor Management</li>
             </ul>
           </div>
+
           <div className="bio__section">
             <h3>Links</h3>
             <ul>
-              <li><a href="https://github.com/psandis" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-              <li><a href="https://www.linkedin.com/in/psandis" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+              <li>
+                <a href="https://github.com/psandis" target="_blank" rel="noopener noreferrer">
+                  GitHub
+                </a>
+              </li>
+              <li>
+                <a href="https://www.linkedin.com/in/psandis" target="_blank" rel="noopener noreferrer">
+                  LinkedIn
+                </a>
+              </li>
             </ul>
           </div>
+
         </div>
       </section>
     </>
