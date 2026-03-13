@@ -212,11 +212,36 @@ export default function CarouselScene({ projects, selectedProjectId, onSelectPro
   const [entranceComplete, setEntranceComplete] = useState(false);
   const animatingRef = useRef(false);
   const pendingSelectRef = useRef<Project | null>(null);
+  const lastInteraction = useRef(0);
 
   useEffect(() => {
     const timer = setTimeout(() => setEntranceComplete(true), 3500);
     return () => clearTimeout(timer);
   }, []);
+
+  // Gentle clockwise auto-rotation — pauses during interaction, resumes after 3s idle
+  useEffect(() => {
+    const idle = !isDragging && !animatingRef.current && !selectedProjectId && hoveredId === null;
+    if (!entranceComplete || !idle) return;
+
+    let raf: number;
+    let prev = performance.now();
+    const AUTO_SPEED = 0.06;
+    const RESUME_DELAY = 3000;
+
+    const tick = () => {
+      const now = performance.now();
+      const dt = (now - prev) / 1000;
+      prev = now;
+
+      if (now - lastInteraction.current > RESUME_DELAY) {
+        setRotation(r => r - AUTO_SPEED * dt);
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [entranceComplete, isDragging, selectedProjectId, hoveredId]);
 
   // Animate rotation smoothly toward a target, then open modal
   const animateToCard = useCallback((project: Project, index: number) => {
@@ -262,23 +287,27 @@ export default function CarouselScene({ projects, selectedProjectId, onSelectPro
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     if (animatingRef.current) return;
+    lastInteraction.current = performance.now();
     setIsDragging(true);
     lastX.current = e.clientX;
   }, []);
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (!isDragging || animatingRef.current) return;
+    lastInteraction.current = performance.now();
     const dx = e.clientX - lastX.current;
     setRotation(r => r + dx * 0.003);
     lastX.current = e.clientX;
   }, [isDragging]);
 
   const handlePointerUp = useCallback(() => {
+    lastInteraction.current = performance.now();
     setIsDragging(false);
   }, []);
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
     if (animatingRef.current) return;
+    lastInteraction.current = performance.now();
     setRotation(r => r + e.deltaY * 0.001);
   }, []);
 
