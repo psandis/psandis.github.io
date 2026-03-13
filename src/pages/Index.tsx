@@ -3,6 +3,8 @@ import CarouselScene from "@/components/CarouselScene";
 import EntranceOverlay from "@/components/EntranceOverlay";
 import FloatingHeader from "@/components/FloatingHeader";
 import ProjectModal from "@/components/ProjectModal";
+import BackgroundMarquee from "@/components/BackgroundMarquee";
+import Footer from "@/components/Footer";
 import { GitHubRepo, Project } from "@/types";
 
 function getAccentColors(): string[] {
@@ -66,6 +68,7 @@ export default function Index() {
 
   return (
     <>
+      <BackgroundMarquee />
       <EntranceOverlay />
       <FloatingHeader />
 
@@ -90,6 +93,7 @@ export default function Index() {
       )}
 
       <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+      <Footer />
     </>
   );
 }
