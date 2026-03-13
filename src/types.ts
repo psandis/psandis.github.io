@@ -5,6 +5,7 @@ export interface GitHubRepo {
   language: string | null;
   html_url: string;
   homepage: string | null;
+  has_pages: boolean;
   pushed_at: string;
   topics: string[];
 }

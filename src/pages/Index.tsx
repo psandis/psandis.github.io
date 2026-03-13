@@ -31,7 +31,7 @@ function repoToProject(repo: GitHubRepo): Project {
     description: repo.description || "No description provided.",
     tech: tech.length > 0 ? tech : ["Code"],
     github: repo.html_url,
-    homepage: repo.homepage || null,
+    homepage: repo.homepage || (repo.has_pages ? `https://psandis.github.io/${repo.name}/` : null),
     color: "", // filled after mount from CSS vars
     updatedAt: repo.pushed_at,
   };
