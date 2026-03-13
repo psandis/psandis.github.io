@@ -86,6 +86,14 @@ export default function FloatingHeader() {
       <NameLogo />
       <nav className="flex items-center gap-6">
         <a
+          href="https://drive.google.com/file/d/1KTgym750rA4502tvToMC2Z95BuEk9vf1/view?usp=drive_link"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
+        >
+          Resume
+        </a>
+        <a
           href="https://github.com/psandis"
           target="_blank"
           rel="noopener noreferrer"
