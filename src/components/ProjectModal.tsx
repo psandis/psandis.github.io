@@ -61,8 +61,23 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
 
+              {/* Thumbnail */}
+              <img
+                src={`/projects/${project.title}.png`}
+                alt={project.title}
+                className="w-full h-40 object-cover rounded-lg mb-4 mt-2"
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  if (img.src.endsWith('.png')) {
+                    img.src = `/projects/${project.title}.jpg`;
+                  } else {
+                    img.style.display = 'none';
+                  }
+                }}
+              />
+
               {/* Title */}
-              <h2 className="font-display text-3xl font-bold text-foreground mt-2 mb-3">
+              <h2 className="font-display text-3xl font-bold text-foreground mb-3">
                 {project.title}
               </h2>
 
