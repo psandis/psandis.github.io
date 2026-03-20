@@ -11,6 +11,48 @@ function getCSSVar(name: string, fallback: string): string {
 const CARD_W = 1.6;
 const CARD_H = 2.2;
 const CARD_D = 0.1;
+const IMG_W = CARD_W - 0.2;
+const IMG_H = 0.85;
+
+function CardImage({ repoName }: { repoName: string }) {
+  const [texture, setTexture] = useState<THREE.Texture | null>(null);
+
+  useEffect(() => {
+    const loader = new THREE.TextureLoader();
+    const url = `/projects/${repoName}.png`;
+    loader.load(
+      url,
+      (tex) => {
+        tex.minFilter = THREE.LinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        setTexture(tex);
+      },
+      undefined,
+      () => {
+        // Try .jpg fallback
+        loader.load(
+          `/projects/${repoName}.jpg`,
+          (tex) => {
+            tex.minFilter = THREE.LinearFilter;
+            tex.magFilter = THREE.LinearFilter;
+            setTexture(tex);
+          },
+          undefined,
+          () => setTexture(null) // No image found, skip
+        );
+      }
+    );
+  }, [repoName]);
+
+  if (!texture) return null;
+
+  return (
+    <mesh position={[0, 0.35, 0.07]}>
+      <planeGeometry args={[IMG_W, IMG_H]} />
+      <meshBasicMaterial map={texture} toneMapped={false} />
+    </mesh>
+  );
+}
 
 interface ProjectCardProps {
   project: Project;
@@ -74,6 +116,9 @@ function ProjectCard({ project, index, total, rotation, onSelect, hoveredId, onH
         <meshBasicMaterial color={color} transparent opacity={isHovered || isFront ? 0.5 : 0.15} />
       </RoundedBox>
 
+      {/* Screenshot image */}
+      <CardImage repoName={project.title} />
+
       {/* Project number */}
       <Text
         position={[-CARD_W / 2 + 0.15, CARD_H / 2 - 0.2, 0.07]}
@@ -87,7 +132,7 @@ function ProjectCard({ project, index, total, rotation, onSelect, hoveredId, onH
 
       {/* Title */}
       <Text
-        position={[0, 0.05, 0.07]}
+        position={[0, -0.25, 0.07]}
         fontSize={0.18}
         maxWidth={CARD_W - 0.3}
         textAlign="center"
@@ -99,7 +144,7 @@ function ProjectCard({ project, index, total, rotation, onSelect, hoveredId, onH
 
       {/* Language / tech */}
       <Text
-        position={[0, -0.4, 0.07]}
+        position={[0, -0.55, 0.07]}
         fontSize={0.09}
         maxWidth={CARD_W - 0.3}
         textAlign="center"
