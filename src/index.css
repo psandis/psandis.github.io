@@ -31,13 +31,13 @@
     --font-body: 'Manrope', sans-serif;
 
     /* Scene colors — Nordic Frost palette (media.io) */
-    --scene-bg: #F0F2F4;
+    --scene-bg: #B8CFEA;
     --scene-card: #DDECEF;
     --scene-text: #FAFBFC;
     --scene-text-muted: #E8ECF0;
     --scene-light-primary: #A8C5D6;
     --scene-light-secondary: #C5BFCF;
-    --scene-ground: #F0F2F4;
+    --scene-ground: #D6DFEB;
     --scene-particle: #A8C5D6;
 
     /* Card accent palette — soft muted tones (Nordic Frost) */

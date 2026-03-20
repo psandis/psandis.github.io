@@ -13,6 +13,30 @@ const CARD_H = 2.2;
 const CARD_D = 0.1;
 const IMG_W = CARD_W - 0.2;
 const IMG_H = 0.85;
+const IMG_RADIUS = 0.08;
+
+function createRoundedRectShape(w: number, h: number, r: number): THREE.Shape {
+  const shape = new THREE.Shape();
+  const x = -w / 2, y = -h / 2;
+  shape.moveTo(x + r, y);
+  shape.lineTo(x + w - r, y);
+  shape.quadraticCurveTo(x + w, y, x + w, y + r);
+  shape.lineTo(x + w, y + h - r);
+  shape.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  shape.lineTo(x + r, y + h);
+  shape.quadraticCurveTo(x, y + h, x, y + h - r);
+  shape.lineTo(x, y + r);
+  shape.quadraticCurveTo(x, y, x + r, y);
+  return shape;
+}
+
+const roundedImgGeometry = new THREE.ShapeGeometry(createRoundedRectShape(IMG_W, IMG_H, IMG_RADIUS));
+// Fix UVs to map texture correctly
+const uvAttr = roundedImgGeometry.attributes.uv;
+const posAttr = roundedImgGeometry.attributes.position;
+for (let i = 0; i < uvAttr.count; i++) {
+  uvAttr.setXY(i, (posAttr.getX(i) + IMG_W / 2) / IMG_W, (posAttr.getY(i) + IMG_H / 2) / IMG_H);
+}
 
 function CardImage({ repoName }: { repoName: string }) {
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
@@ -20,37 +44,42 @@ function CardImage({ repoName }: { repoName: string }) {
   useEffect(() => {
     const loader = new THREE.TextureLoader();
     const url = `/projects/${repoName}.png`;
-    loader.load(
-      url,
-      (tex) => {
-        tex.minFilter = THREE.LinearFilter;
-        tex.magFilter = THREE.LinearFilter;
-        setTexture(tex);
-      },
-      undefined,
-      () => {
-        // Try .jpg fallback
-        loader.load(
-          `/projects/${repoName}.jpg`,
-          (tex) => {
-            tex.minFilter = THREE.LinearFilter;
-            tex.magFilter = THREE.LinearFilter;
-            setTexture(tex);
-          },
-          undefined,
-          () => setTexture(null) // No image found, skip
-        );
+    const applyTexture = (tex: THREE.Texture) => {
+      tex.minFilter = THREE.LinearFilter;
+      tex.magFilter = THREE.LinearFilter;
+      // Crop to fill IMG_W x IMG_H like object-fit: cover
+      const imgAspect = tex.image.width / tex.image.height;
+      const frameAspect = IMG_W / IMG_H;
+      if (imgAspect > frameAspect) {
+        const scale = frameAspect / imgAspect;
+        tex.offset.set((1 - scale) / 2, 0);
+        tex.repeat.set(scale, 1);
+      } else {
+        const scale = imgAspect / frameAspect;
+        tex.offset.set(0, (1 - scale) / 2);
+        tex.repeat.set(1, scale);
       }
-    );
+      setTexture(tex);
+    };
+
+    loader.load(url, applyTexture, undefined, () => {
+      loader.load(`/projects/${repoName}.jpg`, applyTexture, undefined, () => setTexture(null));
+    });
   }, [repoName]);
 
   if (!texture) return null;
 
   return (
-    <mesh position={[0, 0.35, 0.07]}>
-      <planeGeometry args={[IMG_W, IMG_H]} />
-      <meshBasicMaterial map={texture} toneMapped={false} />
-    </mesh>
+    <>
+      {/* Front image */}
+      <mesh position={[0, 0.35, 0.07]} geometry={roundedImgGeometry}>
+        <meshBasicMaterial map={texture} toneMapped={false} />
+      </mesh>
+      {/* Back mirror reflection — flipped and faded */}
+      <mesh position={[0, 0.35, -0.08]} rotation={[0, Math.PI, 0]} geometry={roundedImgGeometry}>
+        <meshBasicMaterial map={texture} toneMapped={false} transparent opacity={0.15} />
+      </mesh>
+    </>
   );
 }
 
@@ -116,13 +145,10 @@ function ProjectCard({ project, index, total, rotation, onSelect, hoveredId, onH
         <meshBasicMaterial color={color} transparent opacity={isHovered || isFront ? 0.5 : 0.15} />
       </RoundedBox>
 
-      {/* Screenshot image */}
-      <CardImage repoName={project.title} />
-
       {/* Project number */}
       <Text
-        position={[-CARD_W / 2 + 0.15, CARD_H / 2 - 0.2, 0.07]}
-        fontSize={0.14}
+        position={[-CARD_W / 2 + 0.15, CARD_H / 2 - 0.12, 0.07]}
+        fontSize={0.12}
         color={project.color}
         anchorX="left"
         anchorY="top"
@@ -130,14 +156,17 @@ function ProjectCard({ project, index, total, rotation, onSelect, hoveredId, onH
         {String(index + 1).padStart(2, "0")}
       </Text>
 
+      {/* Screenshot image */}
+      <CardImage repoName={project.title} />
+
       {/* Title */}
       <Text
-        position={[0, -0.25, 0.07]}
-        fontSize={0.18}
+        position={[0, -0.15, 0.07]}
+        fontSize={0.14}
         maxWidth={CARD_W - 0.3}
         textAlign="center"
         color={textColor}
-        anchorY="middle"
+        anchorY="top"
       >
         {displayTitle}
       </Text>
@@ -240,15 +269,27 @@ interface CarouselSceneProps {
 }
 
 export default function CarouselScene({ projects, selectedProjectId, onSelectProject }: CarouselSceneProps) {
-  const sceneColors = useMemo(() => ({
-    bg: getCSSVar("--scene-bg", "#0a0a0f"),
-    card: getCSSVar("--scene-card", "#1a1a2e"),
-    text: getCSSVar("--scene-text", "#FAFAFA"),
-    textMuted: getCSSVar("--scene-text-muted", "#A1A1AA"),
-    lightPrimary: getCSSVar("--scene-light-primary", "#6D28D9"),
-    lightSecondary: getCSSVar("--scene-light-secondary", "#2563EB"),
-    particle: getCSSVar("--scene-particle", "#6D28D9"),
-  }), []);
+  const [sceneColors, setSceneColors] = useState({
+    bg: "#B8CFEA",
+    card: "#DDECEF",
+    text: "#FAFBFC",
+    textMuted: "#E8ECF0",
+    lightPrimary: "#A8C5D6",
+    lightSecondary: "#C5BFCF",
+    particle: "#A8C5D6",
+  });
+
+  useEffect(() => {
+    setSceneColors({
+      bg: getCSSVar("--scene-bg", "#B8CFEA"),
+      card: getCSSVar("--scene-card", "#DDECEF"),
+      text: getCSSVar("--scene-text", "#FAFBFC"),
+      textMuted: getCSSVar("--scene-text-muted", "#E8ECF0"),
+      lightPrimary: getCSSVar("--scene-light-primary", "#A8C5D6"),
+      lightSecondary: getCSSVar("--scene-light-secondary", "#C5BFCF"),
+      particle: getCSSVar("--scene-particle", "#A8C5D6"),
+    });
+  }, []);
 
   const [rotation, setRotation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -385,8 +426,8 @@ export default function CarouselScene({ projects, selectedProjectId, onSelectPro
         dpr={[1, 1.5]}
         camera={{ position: [0, 8, 14], fov: 45 }}
       >
-        <color attach="background" args={[sceneColors.bg]} />
-        <fog attach="fog" args={[sceneColors.bg, 10, 30]} />
+        <color attach="background" args={["#A3C4E0"]} />
+        <fog attach="fog" args={["#A3C4E0", 10, 30]} />
 
         <CameraRig entranceComplete={entranceComplete} projectCount={projects.length} />
 
@@ -395,13 +436,14 @@ export default function CarouselScene({ projects, selectedProjectId, onSelectPro
         <pointLight position={[-5, 3, -5]} intensity={1} color={sceneColors.lightSecondary} />
         <spotLight position={[0, 10, 0]} intensity={0.8} angle={0.5} penumbra={1} color={sceneColors.text} />
 
-        <Environment preset="night" />
+        <Environment preset="night" background={false} />
 
         {/* Ground reflection */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.8, 0]}>
           <planeGeometry args={[40, 40]} />
-          <meshStandardMaterial color={sceneColors.bg} metalness={0.8} roughness={0.3} />
+          <meshStandardMaterial color={"#A3C4E0"} metalness={0.8} roughness={0.3} />
         </mesh>
+
 
         <Particles color={sceneColors.particle} />
 
