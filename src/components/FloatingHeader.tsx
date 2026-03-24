@@ -20,6 +20,7 @@ function NameLogo() {
       onMouseLeave={() => setHovered(false)}
     >
       <div className="flex items-center gap-2">
+        <img src="/ps-logo.png" alt="PS" className="w-7 h-7 rounded" />
         <AnimatePresence mode="wait">
           <motion.div
             key={cycle}
