@@ -79,13 +79,13 @@ function NameLogo() {
 export default function FloatingHeader() {
   return (
     <motion.header
-      className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-8 py-5"
+      className="fixed top-0 left-0 right-0 z-30 flex flex-wrap items-center justify-between px-4 py-3 sm:px-8 sm:py-5 gap-2"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 3.2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
     >
       <NameLogo />
-      <nav className="flex items-center gap-6">
+      <nav className="flex items-center gap-3 sm:gap-6">
         <a
           href="https://drive.google.com/file/d/1KTgym750rA4502tvToMC2Z95BuEk9vf1/view?usp=drive_link"
           target="_blank"
