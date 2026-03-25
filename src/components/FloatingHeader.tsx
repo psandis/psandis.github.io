@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 
 function NameLogo() {
   const [cycle, setCycle] = useState(0);
@@ -76,41 +77,65 @@ function NameLogo() {
   );
 }
 
+const navLinks = [
+  { href: "https://drive.google.com/file/d/1KTgym750rA4502tvToMC2Z95BuEk9vf1/view?usp=drive_link", label: "Resume" },
+  { href: "https://github.com/psandis", label: "GitHub" },
+  { href: "https://www.linkedin.com/in/petrisandholm/", label: "LinkedIn" },
+];
+
 export default function FloatingHeader() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <motion.header
-      className="fixed top-0 left-0 right-0 z-30 flex flex-wrap items-center justify-between px-4 py-3 sm:px-8 sm:py-5 gap-2"
+      className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3 sm:px-8 sm:py-5"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 3.2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
     >
       <NameLogo />
-      <nav className="flex items-center gap-3 sm:gap-6">
-        <a
-          href="https://drive.google.com/file/d/1KTgym750rA4502tvToMC2Z95BuEk9vf1/view?usp=drive_link"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
-        >
-          Resume
-        </a>
-        <a
-          href="https://github.com/psandis"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
-        >
-          GitHub
-        </a>
-        <a
-          href="https://www.linkedin.com/in/petrisandholm/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
-        >
-          LinkedIn
-        </a>
+
+      {/* Desktop nav */}
+      <nav className="hidden sm:flex items-center gap-6">
+        {navLinks.map(({ href, label }) => (
+          <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+            className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
+          >
+            {label}
+          </a>
+        ))}
       </nav>
+
+      {/* Mobile hamburger */}
+      <button
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="sm:hidden p-2 text-muted-foreground hover:text-foreground transition-colors duration-300"
+      >
+        {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+      </button>
+
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.nav
+            className="absolute top-full right-4 mt-1 flex flex-col gap-3 p-4 rounded-xl sm:hidden"
+            style={{ backgroundColor: "hsl(var(--background) / 0.9)", backdropFilter: "blur(12px)" }}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            {navLinks.map(({ href, label }) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+                onClick={() => setMenuOpen(false)}
+                className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
+              >
+                {label}
+              </a>
+            ))}
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 }
