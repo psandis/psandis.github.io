@@ -42,6 +42,8 @@
   resize: none;
 }
 
+.cyber-terminal.minimized .tmux-layout,
+.cyber-terminal.minimized .tmux-statusbar,
 .cyber-terminal.minimized .cyber-body,
 .cyber-terminal.minimized .cyber-statusbar,
 .cyber-terminal.minimized .cyber-status-dot,
@@ -228,7 +230,89 @@
   caret-color: hsl(177 100% 50%);
 }
 
-/* ── Status bar ── */
+/* ── tmux pane layout ── */
+.tmux-layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.tmux-pane {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tmux-pane-main {
+  flex: 1;
+  border-right: 1px solid hsl(177 100% 50% / 0.15);
+}
+
+.tmux-right-col {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tmux-pane-info {
+  flex: 1;
+  border-bottom: 1px solid hsl(177 100% 50% / 0.15);
+}
+
+.tmux-pane-projects {
+  flex: 1;
+}
+
+.pane-header {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.55rem;
+  color: hsl(177 100% 50% / 0.5);
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid hsl(177 100% 50% / 0.08);
+  flex-shrink: 0;
+}
+
+.pane-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.68rem;
+  scrollbar-width: thin;
+  scrollbar-color: hsl(177 100% 50% / 0.2) transparent;
+}
+
+.pane-content::-webkit-scrollbar { width: 3px; }
+.pane-content::-webkit-scrollbar-thumb {
+  background: hsl(177 100% 50% / 0.2);
+  border-radius: 2px;
+}
+
+/* ── tmux status bar ── */
+.tmux-statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.2rem 0.5rem;
+  background: hsl(120 60% 30%);
+  font-size: 0.6rem;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+  color: hsl(120 10% 95%);
+}
+
+.tmux-statusbar-left,
+.tmux-statusbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tmux-session {
+  font-weight: 600;
+}
+
+/* ── Normal status bar ── */
 .cyber-statusbar {
   display: flex;
   align-items: center;
@@ -272,4 +356,6 @@
     resize: none;
   }
   .cyber-titlebar-center { display: none; }
+  .tmux-right-col { display: none; }
+  .tmux-pane-main { border-right: none; }
 }

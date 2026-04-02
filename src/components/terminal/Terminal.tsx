@@ -25,6 +25,7 @@ const COMMANDS: Record<string, () => string[]> = {
     "  contact     How to reach me",
     "  clear       Clear terminal",
     "  ls          List available sections",
+    "  tmux        Split pane view",
     "  help        Show this message",
   ],
   ls: () => [
@@ -107,6 +108,81 @@ const COMMANDS: Record<string, () => string[]> = {
   ],
 };
 
+// ── System Info Pane ──
+function SystemPane({ cpu, ramUsed, ramTotal, clock }: { cpu: number; ramUsed: number; ramTotal: number; clock: string }) {
+  const uptime = useRef(0);
+  const [uptimeStr, setUptimeStr] = useState("00:00:00");
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      uptime.current += 1;
+      const h = String(Math.floor(uptime.current / 3600)).padStart(2, "0");
+      const m = String(Math.floor((uptime.current % 3600) / 60)).padStart(2, "0");
+      const s = String(uptime.current % 60).padStart(2, "0");
+      setUptimeStr(`${h}:${m}:${s}`);
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const cpuBar = Math.round(cpu / 5);
+  const ramBar = Math.round((ramUsed / ramTotal) * 20);
+
+  return (
+    <div className="tmux-pane tmux-pane-info">
+      <div className="pane-header">── system ──</div>
+      <div className="pane-content">
+        <div className="cyber-line cyber-line-output">  CLOCK    {clock}</div>
+        <div className="cyber-line cyber-line-output">  UPTIME   {uptimeStr}</div>
+        <div className="cyber-line cyber-line-output"> </div>
+        <div className="cyber-line cyber-line-output">  CPU  [{("█".repeat(cpuBar) + "░".repeat(20 - cpuBar))}] <span className="sv-cyan">{cpu}%</span></div>
+        <div className="cyber-line cyber-line-output">  RAM  [{("█".repeat(ramBar) + "░".repeat(20 - ramBar))}] <span className="sv-green">{ramUsed}/{ramTotal}TB</span></div>
+        <div className="cyber-line cyber-line-output"> </div>
+        <div className="cyber-line cyber-line-output">  NET      <span className="sv-magenta">SECURE</span></div>
+        <div className="cyber-line cyber-line-output">  LOCATION <span className="sv-amber">HELSINKI</span></div>
+      </div>
+    </div>
+  );
+}
+
+// ── Projects Pane ──
+function ProjectsPane() {
+  const [repos, setRepos] = useState<{ name: string; language: string | null; updated: string }[]>([]);
+
+  useEffect(() => {
+    fetch("https://api.github.com/users/psandis/repos?sort=updated&per_page=8")
+      .then((r) => r.json())
+      .then((data) => {
+        setRepos(data.map((r: { name: string; language: string | null; pushed_at: string }) => ({
+          name: r.name,
+          language: r.language,
+          updated: new Date(r.pushed_at).toLocaleDateString("en-US", { month: "short", day: "2-digit" }),
+        })));
+      })
+      .catch(() => {});
+  }, []);
+
+  return (
+    <div className="tmux-pane tmux-pane-projects">
+      <div className="pane-header">── projects ──</div>
+      <div className="pane-content">
+        {repos.length === 0 && <div className="cyber-line cyber-line-output">  Loading...</div>}
+        {repos.map((r) => (
+          <div key={r.name} className="cyber-line cyber-line-output">
+            {"  "}{r.name.slice(0, 18).padEnd(18)} <span className="sv-cyan">{(r.language || "").padEnd(10)}</span> <span className="sv-amber">{r.updated}</span>
+          </div>
+        ))}
+        {repos.length > 0 && (
+          <>
+            <div className="cyber-line cyber-line-output"> </div>
+            <div className="cyber-line cyber-line-output">  <span className="sv-green">{repos.length} repos shown</span></div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Main Terminal ──
 interface TerminalProps {
   onClose: () => void;
 }
@@ -121,8 +197,9 @@ export default function Terminal({ onClose }: TerminalProps) {
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [windowState, setWindowState] = useState<"normal" | "maximized" | "minimized">("normal");
+  const [tmuxMode, setTmuxMode] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [size] = useState({ w: 640, h: 420 });
+  const size = tmuxMode ? { w: 900, h: 520 } : { w: 640, h: 420 };
   const [clock, setClock] = useState("");
   const [cpu, setCpu] = useState(42.0);
   const [ramUsed, setRamUsed] = useState(18.4);
@@ -167,7 +244,7 @@ export default function Terminal({ onClose }: TerminalProps) {
   // Focus input
   useEffect(() => {
     if (windowState !== "minimized") inputRef.current?.focus();
-  }, [windowState]);
+  }, [windowState, tmuxMode]);
 
   // Drag handlers
   const handleDragStart = useCallback((e: React.MouseEvent) => {
@@ -207,7 +284,22 @@ export default function Terminal({ onClose }: TerminalProps) {
       return;
     }
 
+    if (trimmed === "tmux") {
+      setTmuxMode(true);
+      newLines.push({ type: "output", text: "[tmux] session started" });
+      newLines.push({ type: "output", text: "" });
+      setLines((prev) => [...prev, ...newLines]);
+      return;
+    }
+
     if (trimmed === "exit" || trimmed === "quit") {
+      if (tmuxMode) {
+        setTmuxMode(false);
+        newLines.push({ type: "output", text: "[tmux] session closed" });
+        newLines.push({ type: "output", text: "" });
+        setLines((prev) => [...prev, ...newLines]);
+        return;
+      }
       onClose();
       return;
     }
@@ -258,7 +350,7 @@ export default function Terminal({ onClose }: TerminalProps) {
     }
 
     setLines((prev) => [...prev, ...newLines]);
-  }, [onClose]);
+  }, [onClose, tmuxMode]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -327,41 +419,89 @@ export default function Terminal({ onClose }: TerminalProps) {
         <span className="cyber-titlebar-right">{clock}</span>
       </div>
 
-      {/* Body */}
-      <div className="cyber-body" ref={scrollRef}>
-        {lines.map((line, i) => (
-          <div key={i} className={`cyber-line cyber-line-${line.type}`}>
-            {line.text}
+      {tmuxMode ? (
+        <>
+          {/* tmux pane layout */}
+          <div className="tmux-layout">
+            <div className="tmux-pane tmux-pane-main">
+              <div className="pane-header">── bash ──</div>
+              <div className="cyber-body" ref={scrollRef}>
+                {lines.map((line, i) => (
+                  <div key={i} className={`cyber-line cyber-line-${line.type}`}>
+                    {line.text}
+                  </div>
+                ))}
+                <div className="cyber-input-line">
+                  <span className="cyber-prompt">visitor@ps ~ $&nbsp;</span>
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    className="cyber-input"
+                    spellCheck={false}
+                    autoComplete="off"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="tmux-right-col">
+              <SystemPane cpu={cpu} ramUsed={ramUsed} ramTotal={ramTotal} clock={clock} />
+              <ProjectsPane />
+            </div>
           </div>
-        ))}
-
-        <div className="cyber-input-line">
-          <span className="cyber-prompt">visitor@ps ~ $&nbsp;</span>
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="cyber-input"
-            spellCheck={false}
-            autoComplete="off"
-          />
-        </div>
-      </div>
-
-      {/* Status bar */}
-      <div className="cyber-statusbar">
-        <div className="cyber-statusbar-left">
-          <span>RAM: <span className="sv-green">{ramUsed}TB / {ramTotal}TB</span></span>
-          <span>CPU: <span className="sv-cyan">{cpu}%</span></span>
-          <span>NET: <span className="sv-magenta">SECURE</span></span>
-        </div>
-        <div className="cyber-statusbar-right">
-          <span>LOCATION: <span className="sv-amber">HELSINKI</span></span>
-          <span className="sv-cyan">v2.077</span>
-        </div>
-      </div>
+          {/* tmux status bar */}
+          <div className="tmux-statusbar">
+            <div className="tmux-statusbar-left">
+              <span className="tmux-session">[ps-terminal]</span>
+              <span>0:bash*</span>
+              <span>1:system</span>
+              <span>2:projects</span>
+            </div>
+            <div className="tmux-statusbar-right">
+              <span>visitor@ps</span>
+              <span>{clock}</span>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Normal terminal */}
+          <div className="cyber-body" ref={scrollRef}>
+            {lines.map((line, i) => (
+              <div key={i} className={`cyber-line cyber-line-${line.type}`}>
+                {line.text}
+              </div>
+            ))}
+            <div className="cyber-input-line">
+              <span className="cyber-prompt">visitor@ps ~ $&nbsp;</span>
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="cyber-input"
+                spellCheck={false}
+                autoComplete="off"
+              />
+            </div>
+          </div>
+          {/* Normal status bar */}
+          <div className="cyber-statusbar">
+            <div className="cyber-statusbar-left">
+              <span>RAM: <span className="sv-green">{ramUsed}TB / {ramTotal}TB</span></span>
+              <span>CPU: <span className="sv-cyan">{cpu}%</span></span>
+              <span>NET: <span className="sv-magenta">SECURE</span></span>
+            </div>
+            <div className="cyber-statusbar-right">
+              <span>LOCATION: <span className="sv-amber">HELSINKI</span></span>
+              <span className="sv-cyan">v2.077</span>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
