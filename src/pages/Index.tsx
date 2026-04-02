@@ -5,6 +5,7 @@ import FloatingHeader from "@/components/FloatingHeader";
 import ProjectModal from "@/components/ProjectModal";
 import BackgroundMarquee from "@/components/BackgroundMarquee";
 import Footer from "@/components/Footer";
+import TerminalModal from "@/components/terminal/TerminalModal";
 import { GitHubRepo, Project } from "@/types";
 
 function getAccentColors(): string[] {
@@ -42,6 +43,7 @@ export default function Index() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [terminalOpen, setTerminalOpen] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -70,7 +72,7 @@ export default function Index() {
     <>
       <BackgroundMarquee />
       <EntranceOverlay />
-      <FloatingHeader />
+      <FloatingHeader onTerminalOpen={() => setTerminalOpen(true)} />
 
       {loading && (
         <div className="fixed inset-0 z-20 flex items-center justify-center">
@@ -93,6 +95,7 @@ export default function Index() {
       )}
 
       <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+      <TerminalModal open={terminalOpen} onClose={() => setTerminalOpen(false)} />
       <Footer />
     </>
   );

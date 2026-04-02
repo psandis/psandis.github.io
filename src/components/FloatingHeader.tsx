@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, TerminalSquare } from "lucide-react";
 
 function NameLogo() {
   const [cycle, setCycle] = useState(0);
@@ -83,7 +83,7 @@ const navLinks = [
   { href: "https://www.linkedin.com/in/petrisandholm/", label: "LinkedIn" },
 ];
 
-export default function FloatingHeader() {
+export default function FloatingHeader({ onTerminalOpen }: { onTerminalOpen?: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -97,9 +97,16 @@ export default function FloatingHeader() {
 
       {/* Desktop nav */}
       <nav className="hidden sm:flex items-center gap-6">
+        <button
+          onClick={onTerminalOpen}
+          className="font-body text-sm text-foreground/70 hover:text-foreground transition-colors duration-300 flex items-center gap-1.5"
+        >
+          <TerminalSquare className="w-4 h-4" />
+          Terminal
+        </button>
         {navLinks.map(({ href, label }) => (
           <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-            className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
+            className="font-body text-sm text-foreground/70 hover:text-foreground transition-colors duration-300"
           >
             {label}
           </a>
@@ -125,6 +132,13 @@ export default function FloatingHeader() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
+            <button
+              onClick={() => { setMenuOpen(false); onTerminalOpen?.(); }}
+              className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 flex items-center gap-1.5"
+            >
+              <TerminalSquare className="w-4 h-4" />
+              Terminal
+            </button>
             {navLinks.map(({ href, label }) => (
               <a key={label} href={href} target="_blank" rel="noopener noreferrer"
                 onClick={() => setMenuOpen(false)}
