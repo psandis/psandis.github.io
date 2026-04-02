@@ -11,8 +11,8 @@ function getCSSVar(name: string, fallback: string): string {
 const CARD_W = 1.6;
 const CARD_H = 2.2;
 const CARD_D = 0.1;
-const IMG_W = CARD_W - 0.2;
-const IMG_H = 0.85;
+const IMG_W = CARD_W - 0.4;
+const IMG_H = 0.65;
 const IMG_RADIUS = 0.08;
 
 function createRoundedRectShape(w: number, h: number, r: number): THREE.Shape {
@@ -38,8 +38,16 @@ for (let i = 0; i < uvAttr.count; i++) {
   uvAttr.setXY(i, (posAttr.getX(i) + IMG_W / 2) / IMG_W, (posAttr.getY(i) + IMG_H / 2) / IMG_H);
 }
 
-function CardImage({ repoName }: { repoName: string }) {
+const LANG_ICON_MAP: Record<string, string> = {
+  typescript: "/icons/typescript.png",
+  javascript: "/icons/javascript.png",
+  java: "/icons/java.png",
+  python: "/icons/python.png",
+};
+
+function CardImage({ repoName, language }: { repoName: string; language?: string }) {
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
+  const [isFallback, setIsFallback] = useState(false);
 
   useEffect(() => {
     const loader = new THREE.TextureLoader();
@@ -47,8 +55,8 @@ function CardImage({ repoName }: { repoName: string }) {
     const applyTexture = (tex: THREE.Texture) => {
       tex.minFilter = THREE.LinearFilter;
       tex.magFilter = THREE.LinearFilter;
-      // Crop to fill IMG_W x IMG_H like object-fit: cover
-      const imgAspect = tex.image.width / tex.image.height;
+      const img = tex.image as HTMLImageElement;
+      const imgAspect = img.width / img.height;
       const frameAspect = IMG_W / IMG_H;
       if (imgAspect > frameAspect) {
         const scale = frameAspect / imgAspect;
@@ -60,14 +68,38 @@ function CardImage({ repoName }: { repoName: string }) {
         tex.repeat.set(1, scale);
       }
       setTexture(tex);
+      setIsFallback(false);
+    };
+
+    const loadFallback = () => {
+      const iconUrl = LANG_ICON_MAP[(language || "").toLowerCase()];
+      if (iconUrl) {
+        loader.load(iconUrl, (tex) => {
+          tex.minFilter = THREE.LinearFilter;
+          tex.magFilter = THREE.LinearFilter;
+          setTexture(tex);
+          setIsFallback(true);
+        }, undefined, () => setTexture(null));
+      } else {
+        setTexture(null);
+      }
     };
 
     loader.load(url, applyTexture, undefined, () => {
-      loader.load(`/projects/${repoName}.jpg`, applyTexture, undefined, () => setTexture(null));
+      loader.load(`/projects/${repoName}.jpg`, applyTexture, undefined, loadFallback);
     });
-  }, [repoName]);
+  }, [repoName, language]);
 
   if (!texture) return null;
+
+  if (isFallback) {
+    return (
+      <mesh position={[0, 0.4, 0.07]}>
+        <planeGeometry args={[0.45, 0.45]} />
+        <meshBasicMaterial map={texture} toneMapped={false} transparent />
+      </mesh>
+    );
+  }
 
   return (
     <>
@@ -157,7 +189,7 @@ function ProjectCard({ project, index, total, rotation, onSelect, hoveredId, onH
       </Text>
 
       {/* Screenshot image */}
-      <CardImage repoName={project.title} />
+      <CardImage repoName={project.title} language={project.tech[0]} />
 
       {/* Title */}
       <Text
