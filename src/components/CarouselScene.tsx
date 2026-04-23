@@ -107,7 +107,7 @@ function CardImage({ repoName, language }: { repoName: string; language?: string
       <mesh position={[0, 0.35, 0.07]} geometry={roundedImgGeometry}>
         <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>
-      {/* Back mirror reflection — flipped and faded */}
+      {/* Back mirror reflection, flipped and faded */}
       <mesh position={[0, 0.35, -0.08]} rotation={[0, Math.PI, 0]} geometry={roundedImgGeometry}>
         <meshBasicMaterial map={texture} toneMapped={false} transparent opacity={0.15} />
       </mesh>
@@ -337,7 +337,7 @@ export default function CarouselScene({ projects, selectedProjectId, onSelectPro
     return () => clearTimeout(timer);
   }, []);
 
-  // Gentle clockwise auto-rotation — pauses during interaction, resumes after 3s idle
+  // Gentle clockwise auto-rotation, pauses during interaction, resumes after 3s idle
   useEffect(() => {
     const idle = !isDragging && !animatingRef.current && !selectedProjectId && hoveredId === null;
     if (!entranceComplete || !idle) return;

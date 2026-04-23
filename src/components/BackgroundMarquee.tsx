@@ -6,7 +6,7 @@ const LINES = [
   "Design Thinking  ·  Full Stack  ·  Open Source",
 ];
 
-const SPEED = 60; // seconds per loop — slow and calm
+const SPEED = 60; // seconds per loop, slow and calm
 
 export default function BackgroundMarquee() {
   return (

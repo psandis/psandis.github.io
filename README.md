@@ -2,7 +2,7 @@
 
 ![psandis.github.io](public/projects/psandis.github.io.png)
 
-Personal portfolio site for Petri Sandholm — engineering leader with 20+ years of experience in telecom, banking, and large-scale platforms.
+Personal portfolio site for Petri Sandholm, engineering leader with 20+ years of experience in telecom, banking, and large-scale platforms.
 
 ## Tech Stack
 

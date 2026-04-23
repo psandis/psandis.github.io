@@ -30,7 +30,7 @@
     --font-display: 'Syne', sans-serif;
     --font-body: 'Manrope', sans-serif;
 
-    /* Scene colors — Nordic Frost palette (media.io) */
+    /* Scene colors -Nordic Frost palette (media.io) */
     --scene-bg: #B8CFEA;
     --scene-card: #DDECEF;
     --scene-text: #FAFBFC;
@@ -40,7 +40,7 @@
     --scene-ground: #D6DFEB;
     --scene-particle: #A8C5D6;
 
-    /* Card accent palette — soft muted tones (Nordic Frost) */
+    /* Card accent palette -soft muted tones (Nordic Frost) */
     --accent-1: #7BA3B8;
     --accent-2: #8EADB5;
     --accent-3: #9B8EAD;
