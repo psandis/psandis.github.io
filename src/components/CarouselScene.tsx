@@ -212,7 +212,7 @@ function ProjectCard({ project, index, total, rotation, onSelect, hoveredId, onH
         color={textMutedColor}
         anchorY="top"
       >
-        {project.tech.slice(0, 3).join(" · ")}
+        {project.tech.slice(0, 6).join(" · ")}
       </Text>
 
       {/* Bottom accent line */}
