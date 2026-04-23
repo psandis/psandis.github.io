@@ -20,16 +20,31 @@ const COMMANDS: Record<string, () => string[]> = {
     "Available commands:",
     "",
     "  about       Who I am",
+    "  whoami      One-liner identity",
     "  projects    List GitHub repositories",
     "  skills      Tech stack & tools",
     "  contact     How to reach me",
-    "  clear       Clear terminal",
     "  ls          List available sections",
+    "  pwd         Current path",
+    "  date        Current date and time",
+    "  resume      Open resume PDF",
+    "  open        open github | linkedin | resume",
     "  tmux        Split pane view",
+    "  clear       Clear terminal",
     "  help        Show this message",
   ],
   ls: () => [
     "about/    projects/    skills/    contact/",
+  ],
+  whoami: () => [
+    "petri sandholm",
+    "engineering manager, builder, 25+ years in telecom, banking, and cloud",
+  ],
+  pwd: () => [
+    "/home/petri/life/work/building-things",
+  ],
+  date: () => [
+    new Date().toLocaleString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" }),
   ],
   about: () => [
     "┌──────────────────────────────────────────────────┐",
@@ -280,6 +295,33 @@ export default function Terminal({ onClose }: TerminalProps) {
     }
 
     if (trimmed === "") {
+      setLines((prev) => [...prev, ...newLines]);
+      return;
+    }
+
+    if (trimmed === "resume") {
+      window.open("https://drive.google.com/file/d/1KTgym750rA4502tvToMC2Z95BuEk9vf1/view?usp=drive_link", "_blank");
+      newLines.push({ type: "output", text: "Opening resume..." });
+      newLines.push({ type: "output", text: "" });
+      setLines((prev) => [...prev, ...newLines]);
+      return;
+    }
+
+    if (trimmed.startsWith("open ")) {
+      const target = trimmed.slice(5).trim();
+      const urls: Record<string, string> = {
+        github: "https://github.com/psandis",
+        linkedin: "https://www.linkedin.com/in/petrisandholm/",
+        resume: "https://drive.google.com/file/d/1KTgym750rA4502tvToMC2Z95BuEk9vf1/view?usp=drive_link",
+      };
+      if (urls[target]) {
+        window.open(urls[target], "_blank");
+        newLines.push({ type: "output", text: `Opening ${target}...` });
+      } else {
+        newLines.push({ type: "error", text: `open: unknown target '${target}'` });
+        newLines.push({ type: "output", text: "  Usage: open github | open linkedin | open resume" });
+      }
+      newLines.push({ type: "output", text: "" });
       setLines((prev) => [...prev, ...newLines]);
       return;
     }

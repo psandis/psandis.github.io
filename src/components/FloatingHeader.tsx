@@ -99,14 +99,20 @@ export default function FloatingHeader({ onTerminalOpen }: { onTerminalOpen?: ()
       <nav className="hidden sm:flex items-center gap-6">
         <button
           onClick={onTerminalOpen}
-          className="font-body text-sm text-foreground/70 hover:text-foreground transition-colors duration-300 flex items-center gap-1.5"
+          className="nav-pulse font-body text-sm flex items-center gap-1.5"
+          style={{ animationDelay: "0s" }}
         >
           <TerminalSquare className="w-4 h-4" />
           Terminal
         </button>
-        {navLinks.map(({ href, label }) => (
-          <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-            className="font-body text-sm text-foreground/70 hover:text-foreground transition-colors duration-300"
+        {navLinks.map(({ href, label }, i) => (
+          <a
+            key={label}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-pulse font-body text-sm"
+            style={{ animationDelay: `${(i + 1) * 0.8}s` }}
           >
             {label}
           </a>

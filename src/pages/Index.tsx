@@ -19,7 +19,7 @@ function repoToProject(repo: GitHubRepo): Project {
   const tech: string[] = [];
   if (repo.language) tech.push(repo.language);
   if (repo.topics) {
-    repo.topics.slice(0, 7).forEach((t) => {
+    repo.topics.slice(0, 5).forEach((t) => {
       if (t.toLowerCase() !== (repo.language || "").toLowerCase()) {
         tech.push(t);
       }
