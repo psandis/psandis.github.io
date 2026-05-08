@@ -125,3 +125,7 @@
   color: hsl(var(--foreground));
   text-shadow: none;
 }
+
+.carousel-container {
+  touch-action: none;
+}
