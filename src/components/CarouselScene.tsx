@@ -348,7 +348,7 @@ function ProjectCard({ project, index, total, rotation, onSelect, hoveredId, onH
 }
 
 function CameraRig({ entranceComplete, projectCount, vertical }: { entranceComplete: boolean; projectCount: number; vertical: boolean }) {
-  const { camera } = useThree();
+  const { camera, size } = useThree();
   const initialPos = useRef(new THREE.Vector3(0, 8, 14));
   const hTargetPos = useRef(new THREE.Vector3(0, 4.0, Math.max(8, projectCount * 0.7 + 4)));
   const vTargetPos = useRef(new THREE.Vector3());
@@ -361,6 +361,7 @@ function CameraRig({ entranceComplete, projectCount, vertical }: { entranceCompl
     cam.updateProjectionMatrix();
 
     hTargetPos.current.z = Math.max(8, projectCount * 0.7 + 4);
+    hTargetPos.current.y = size.width < size.height ? 1.5 : 4.0;
     const vRadius = (projectCount * (VCARD_H + VCARD_GAP)) / (Math.PI * 2);
     const camDist = Math.max(5.5, VCARD_W * 1.0);
     vTargetPos.current.set(0, 0, vRadius + camDist);
@@ -526,7 +527,6 @@ export default function CarouselScene({ projects, selectedProjectId, onSelectPro
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     if (animatingRef.current) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
     lastInteraction.current = performance.now();
     setIsDragging(true);
     lastX.current = e.clientX;
@@ -578,6 +578,7 @@ export default function CarouselScene({ projects, selectedProjectId, onSelectPro
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
       onWheel={handleWheel}
     >
       <Canvas
