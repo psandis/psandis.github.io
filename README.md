@@ -1,9 +1,9 @@
 # psandis.github.io
 
 [![Deploy](https://img.shields.io/github/deployments/psandis/psandis.github.io/github-pages?label=deploy&style=flat-square)](https://psandis.github.io)
-[![Version](https://img.shields.io/badge/version-1.0.1-blue?style=flat-square)](https://github.com/psandis/psandis.github.io/releases)
+[![Version](https://img.shields.io/badge/version-1.0.2-blue?style=flat-square)](https://github.com/psandis/psandis.github.io/releases)
 
-Personal portfolio site for Petri Sandholm, engineering leader with 20+ years of experience in telecom, banking, and large-scale platforms.
+Personal portfolio site for Petri Sandholm, engineering leader with 25+ years of experience in telecom, banking, and large-scale platforms.
 
 <p align="center">
   <img src="public/projects/psandis.github.io.png" alt="psandis.github.io" width="600">
@@ -25,7 +25,7 @@ An interactive 3D portfolio built with React Three Fiber. Projects are fetched l
 
 ## Features
 
-- Interactive 3D project carousel with auto-rotation, drag, and scroll
+- Interactive 3D project carousel with horizontal and vertical modes, auto-rotation, drag, and scroll
 - Project screenshots on cards with back-of-card mirror reflection
 - Language icon fallback for projects without screenshots
 - Project detail modal with thumbnail, tech stack, and links
