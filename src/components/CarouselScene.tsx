@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Text, RoundedBox, Float, Environment } from "@react-three/drei";
+import { Text, RoundedBox, Float } from "@react-three/drei";
 import * as THREE from "three";
 import { Project } from "@/types";
 
@@ -596,7 +596,6 @@ export default function CarouselScene({ projects, selectedProjectId, onSelectPro
         <pointLight position={[-5, 3, -5]} intensity={1} color={sceneColors.lightSecondary} />
         <spotLight position={[0, 10, 0]} intensity={0.8} angle={0.5} penumbra={1} color={sceneColors.text} />
 
-        <Environment preset="night" background={false} />
 
         {!vertical && (
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.8, 0]}>
