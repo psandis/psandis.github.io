@@ -600,7 +600,7 @@ export default function CarouselScene({ projects, selectedProjectId, onSelectPro
         {!vertical && (
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.8, 0]}>
             <planeGeometry args={[40, 40]} />
-            <meshStandardMaterial color={"#A3C4E0"} metalness={0.8} roughness={0.3} />
+            <meshBasicMaterial color={"#A3C4E0"} />
           </mesh>
         )}
 
